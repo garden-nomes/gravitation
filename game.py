@@ -56,6 +56,10 @@ class Ball(pygame.sprite.Sprite):
                 angle = math.atan2(diff[1], diff[0])
                 force = [ math.cos(angle) * strength, math.sin(angle) * strength ]
                 
+                # reverse gravitational force if balls are of the same color
+                # if ball.color == self.color:
+                #     force = [ -force[0], -force[1] ]
+                
                 self.applyForce(force)
                 
     
@@ -78,7 +82,7 @@ class Player(Ball):
     DENSITY = 0.25
     
     def __init__(self, location = [WIDTH / 2, HEIGHT / 2], size = PLAYER_SIZE,
-                 color = PLAYER_COLOR, acceleration = ACC, maxChain = 9):
+                 color = PLAYER_COLOR, acceleration = ACC, maxChain = 3):
                  
         self.color = COLORS[random.randint(0, 2)]
         self.acceleration = acceleration
@@ -129,12 +133,16 @@ class Player(Ball):
     
     def score(self, ball):
         if self.color == ball.color:
-            self.mass += ball.mass
             self.chain += 1
-            self.chain %= self.maxChain
+            if self.chain > self.maxChain:
+                self.mass = self.baseMass
+                self.chain = 0
+                self.maxChain += 1
+            else:
+                self.mass += ball.mass
         else:
             self.mass = self.baseMass
-            self.chain = 1
+            self.chain = 0
             self.color = ball.color
         
 class Node(Ball):
@@ -176,6 +184,8 @@ def main():
     #ball = Ball(WIDTH / 2, HEIGHT / 2)
     player = Player()
     balls = [ player ]
+    
+    font = pygame.font.Font(pygame.font.match_font('arialblack'), 36)
 
     # begin main game loop
     
@@ -188,7 +198,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_LSHIFT:
                 balls.append(Node([ random.randint(0, WIDTH), random.randint(0, HEIGHT) ]))
 
         # check for input
@@ -209,6 +219,10 @@ def main():
         # draw game objects
         for ball in balls:
             ball.draw(screen)
+        
+        text = font.render(str(player.maxChain), True, (255, 255, 255))
+        textpos = (WIDTH / 2 - text.get_width() / 2, 16)
+        screen.blit(text, textpos)
         #ball.draw(screen)
         #for node in nodes: node.draw(screen)
     
