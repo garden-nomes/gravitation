@@ -8,6 +8,12 @@ HEIGHT = 900
 BACKGROUND = [0, 0, 0]
 G = 1
 
+COLORS = (
+    (127, 127, 0),
+    (0, 127, 127),
+    (127, 0, 127)
+)
+
 class Ball(pygame.sprite.Sprite):
     
     location = [0, 0]
@@ -74,15 +80,15 @@ class Player(Ball):
     def __init__(self, location = [WIDTH / 2, HEIGHT / 2], size = PLAYER_SIZE,
                  color = PLAYER_COLOR, acceleration = ACC, maxChain = 9):
                  
-        self.baseSize = size
-        self.color = color
+        self.color = COLORS[random.randint(0, 2)]
         self.acceleration = acceleration
         self.maxChain = maxChain
+        self.baseMass = size / self.DENSITY
         
         self.chain = 0
         self.baseChainAngle = 0
         
-        super(Player, self).__init__(location=location, mass=size / self.DENSITY, color=color, density=self.DENSITY)
+        super(Player, self).__init__(location=location, mass=size / self.DENSITY, color=self.color, density=self.DENSITY)
         
     def draw(self, surface):
         super(Player, self).draw(surface)
@@ -121,15 +127,22 @@ class Player(Ball):
         # rotate score chain
         self.baseChainAngle = (self.baseChainAngle + math.pi / 512) % (math.pi * 2)
     
-    def score(self):
-        self.chain += 1
-        self.chain %= self.maxChain
+    def score(self, ball):
+        if self.color == ball.color:
+            self.mass += ball.mass
+            self.chain += 1
+            self.chain %= self.maxChain
+        else:
+            self.mass = self.baseMass
+            self.chain = 1
+            self.color = ball.color
         
 class Node(Ball):
     DENSITY = 1
     
     def __init__(self, location, color = (255, 255, 255), size = 16):
-        super(Node, self).__init__(location=location, color=color, mass=size / self.DENSITY, density=self.DENSITY)
+        super(Node, self).__init__(location=location, color=COLORS[random.randint(0, 2)],
+                                   mass=size / self.DENSITY, density=self.DENSITY)
     
     def draw(self, surface):
         super(Node, self).draw(surface)
@@ -144,7 +157,7 @@ class Node(Ball):
                     radiusSq = (self.mass * self.density + ball.mass * ball.density)**2
                     distSq = (self.location[0] - ball.location[0])**2 + (self.location[1] - ball.location[1])**2
                     if distSq <= radiusSq:
-                        ball.score()
+                        ball.score(self)
                         return True
         
         return False
