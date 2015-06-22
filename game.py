@@ -43,7 +43,7 @@ class Ball(pygame.sprite.Sprite):
         self.velocity[0] += force[0] / self.mass * 16;
         self.velocity[1] += force[1] / self.mass * 16;
     
-    def applyGravity(self, balls):
+    def applyGravity(self, balls, reverse = False):
         for ball in balls:
             if ball != self:
                 # gravitational force: F = (g * mass * mass) / (distance * distance)
@@ -57,8 +57,8 @@ class Ball(pygame.sprite.Sprite):
                 force = [ math.cos(angle) * strength, math.sin(angle) * strength ]
                 
                 # reverse gravitational force if balls are of the same color
-                # if ball.color == self.color:
-                #     force = [ -force[0], -force[1] ]
+                if reverse:
+                     force = [ -force[0], -force[1] ]
                 
                 self.applyForce(force)
                 
@@ -202,8 +202,8 @@ def main():
                 balls.append(Node([ random.randint(0, WIDTH), random.randint(0, HEIGHT) ]))
 
         # check for input
-        
-        if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
             done = True
     
         # draw background
@@ -213,7 +213,7 @@ def main():
         # update game objects
         for ball in balls:
             if ball.checkCollisions(balls): balls.remove(ball)
-            ball.applyGravity(balls)
+            ball.applyGravity(balls, not keys[pygame.K_SPACE])
             ball.update()
     
         # draw game objects
