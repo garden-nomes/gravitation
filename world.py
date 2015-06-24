@@ -1,12 +1,20 @@
+import pygame
+from pygame import key, font
+from random import choice, randint
+
 from player import Player
 from node import Node
+from spawner import Spawner
+from ball import Ball
+from particle import Particle
 
 BACKGROUND = (32, 32, 32)
+GUI_COLOR = (224, 224, 224)
 
-class World:
+class World(object):
     
-    # constants
-
+    # publicly accesible constants
+    
     COLORS = (
         (127, 127, 0),
         (0, 127, 127),
@@ -15,16 +23,38 @@ class World:
     
     G = 1   # gravitational constant
     
+    MAX_NODES = 8
+    PARTICLE_COUNT = 25
+    
     def __init__(self, surface):
         self.surface = surface
         self.width = surface.get_width()
         self.height = surface.get_height()
         
+        self.reverseGravity = False
+        
         self.sprites = []
-        self.player = Player(self, [self.width / 2, self.height / 2])
+        
+        self.player = Player(world = self, position = [self.width / 2, self.height / 2])
         self.sprites.append(self.player)
+        
+        self.spawner = Spawner(self)
+        for i in range(self.MAX_NODES):
+            self.sprites.append(self.spawner.spawn())
+        
+        for i in range(self.PARTICLE_COUNT):
+            position = [randint(0, self.width), randint(0, self.height)]
+            self.sprites.append(Particle(self, position))
+        
+        self.scoreFont = font.Font(font.match_font('arialblack'), 36)
     
-    def update(self, keys):
+    def add(self, sprite):
+        self.sprites.append(sprite)
+    
+    def update(self):
+        keys = key.get_pressed()
+        self.reverseGravity = keys[pygame.K_LSHIFT] or keys[pygame.K_SPACE]
+        
         for sprite in self.sprites:
             sprite.update()
     
@@ -33,8 +63,37 @@ class World:
         
         for sprite in self.sprites:
             sprite.draw(self.surface)
+        
+        self.renderGui()
     
     def playerNodeCollide(self, node):
-        player.score(node)
-        sprites.remove(node)
+        self.player.score(node)
+        self.sprites.remove(node)
+        self.sprites.append(self.spawner.spawn())
+    
+    def nodeNodeCollide(self, node1, node2):
+        if node1.color == node2.color:
+            color = choice((node1.color, node2.color))
+            velocity = [ node1.velocity[0] + node2.velocity[0],
+                         node1.velocity[1] + node2.velocity[1] ]
+            position = [ node1.position[0] + (node1.position[0] - node2.position[0]) / 2,
+                         node1.position[1] + (node1.position[1] - node2.position[1]) / 2 ]
+            mass = node1.mass + node2.mass
+            density = (node1.density + node2.density) / 2
+        
+            self.sprites.remove(node1)
+            self.sprites.remove(node2)
+            self.sprites.append(Node(
+                world = self,
+                color = color,
+                position = position,
+                velocity = velocity,
+                mass = mass,
+                density = density,
+            ))
+    
+    def renderGui(self):
+        text = self.scoreFont.render(str(self.player.maxChain), True, GUI_COLOR)
+        position = (self.width / 2 - text.get_width() / 2, self.height / 2 - text.get_height() / 2)
+        self.surface.blit(text, position)
         

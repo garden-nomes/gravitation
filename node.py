@@ -1,22 +1,35 @@
+from random import choice
+
 from ball import Ball
 
+DENSITY = 1
+SIZE = 16
+
 class Node(Ball):
-    DENSITY = 1
     
-    def __init__(self, position, color = (255, 255, 255), size = 16):
-        super(Node, self).__init__(position=position, color=COLORS[random.randint(0, 2)],
-                                   mass=size / self.DENSITY, density=self.DENSITY)
-    
-    def draw(self, surface):
-        super(Node, self).draw(surface)
+    def __init__(self, world, position, velocity = None, color = None, mass = SIZE / DENSITY, density = DENSITY):
+        if color == None: color = choice(world.COLORS)
+        super(Node, self).__init__(world = world, position = position, velocity = velocity,
+                                   color = color, mass = mass, density = density, wrap = False)
     
     def update(self):
-        if world.player: checkPlayerCollision(world.player)
-        
         super(Node, self).update()
+        
+        # start wrapping around screen if already onscreen
+        if self.wrap == False:
+            if ( self.position[0] > 0 and self.position[0] < self.world.width
+                 and self.position[1] > 0 and self.position[1] < self.world.height ):
+                self.wrap = True
+        
+        if self.world.player != None:
+            self.checkPlayerCollision(self.world.player)
+        
+        # for node in [sprite for sprite in self.world.sprites if isinstance(sprite, Node)]:
+        #     if node != self:
+        #         if self.checkCollision(node): self.world.nodeNodeCollide(self, node)
     
     def checkPlayerCollision(self, player):
         radiusSq = (self.mass * self.density + player.mass * player.density)**2
-        distSq = (self.position[0] - ball.position[0])**2 + (self.position[1] - ball.position[1])**2
+        distSq = (self.position[0] - player.position[0])**2 + (self.position[1] - player.position[1])**2
         if distSq <= radiusSq:
-            world.playerNodeCollide(self)
+            self.world.playerNodeCollide(self)

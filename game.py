@@ -13,14 +13,18 @@ def main():
     # initialize pygame
 
     pygame.init()
-    screen = display.set_mode([WIDTH, HEIGHT], pygame.FULLSCREEN)
+    
+    # initialize screen
+    
+    info = display.Info()
+    screenSize = (info.current_w, info.current_h)
+    
+    screen = display.set_mode(screenSize, pygame.FULLSCREEN)
     mouse.set_visible(False)
 
     # initialize game world
     
     world = World(screen)
-    
-    ##font = pygame.font.Font(pygame.font.match_font('arialblack'), 36)
 
     # begin main game loop
 
