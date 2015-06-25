@@ -1,6 +1,6 @@
 from random import choice
 from math import atan2, cos, sin
-from pygame import draw
+from pygame import draw, gfxdraw
 
 class Ball(object):
     
@@ -59,10 +59,19 @@ class Ball(object):
     
     def draw(self, surface):
         radius = self.mass * self.density
-        draw.ellipse(
+        gfxdraw.filled_circle(
             surface,
-            self.color,
-            (self.position[0] - radius, self.position[1] - radius, radius * 2, radius * 2)
+            int(self.position[0]),
+            int(self.position[1]),
+            int(radius),
+            self.color
+        )
+        gfxdraw.aacircle(
+            surface,
+            int(self.position[0]),
+            int(self.position[1]),
+            int(radius),
+            self.color
         )
     
     def checkCollision(self, ball):
