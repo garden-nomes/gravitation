@@ -21,7 +21,7 @@ class World(object):
         (127, 0, 127)
     )
     
-    G = 1   # gravitational constant
+    G = 1000   # gravitational constant
     
     MAX_NODES = 8
     PARTICLE_COUNT = 25
@@ -51,12 +51,12 @@ class World(object):
     def add(self, sprite):
         self.sprites.append(sprite)
     
-    def update(self):
+    def update(self, millis):
         keys = key.get_pressed()
         self.reverseGravity = keys[pygame.K_LSHIFT] or keys[pygame.K_SPACE]
         
         for sprite in self.sprites:
-            sprite.update()
+            sprite.update(millis)
     
     def draw(self):
         self.surface.fill(BACKGROUND)

@@ -6,8 +6,8 @@ from math import pi, cos, sin
 from ball import Ball
 
 PLAYER_SIZE = 24
-ACC = 0.2
-DENSITY = 1
+ACC = 50.0
+DENSITY = 1.0
 
 class Player(Ball):
     
@@ -42,24 +42,24 @@ class Player(Ball):
             angle += pi * 2 / (self.maxChain - 1)
             angle %= pi * 2
     
-    def update(self):
-        super(Player, self).update()
+    def update(self, millis):
+        super(Player, self).update(millis)
         
         # get input
         keys = key.get_pressed()
         
         # move based in key input
         if keys[pygame.K_LEFT]:
-            self.applyForce([ -self.acceleration, 0 ])
+            self.applyForce([ -self.acceleration * millis / 1000, 0 ])
         if keys[pygame.K_RIGHT]:
-            self.applyForce([ self.acceleration, 0 ])
+            self.applyForce([ self.acceleration * millis / 1000, 0 ])
         if keys[pygame.K_UP]:
-            self.applyForce([ 0, -self.acceleration ])
+            self.applyForce([ 0, -self.acceleration * millis / 1000 ])
         if keys[pygame.K_DOWN]:
-            self.applyForce([ 0, self.acceleration ])
+            self.applyForce([ 0, self.acceleration * millis / 1000 ])
         
         # rotate score chain
-        self.baseChainAngle = (self.baseChainAngle + pi / 512) % (pi * 2)
+        self.baseChainAngle = (self.baseChainAngle + pi / 300 * millis) % (pi * 2)
     
     def score(self, ball):
         if self.color == ball.color:

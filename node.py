@@ -12,8 +12,8 @@ class Node(Ball):
         super(Node, self).__init__(world = world, position = position, velocity = velocity,
                                    color = color, mass = mass, density = density, wrap = False)
     
-    def update(self):
-        super(Node, self).update()
+    def update(self, millis):
+        super(Node, self).update(millis)
         
         # start wrapping around screen if already onscreen
         if self.wrap == False:

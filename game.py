@@ -1,5 +1,5 @@
 import pygame
-from pygame import display, mouse, key, event
+from pygame import display, mouse, key, event, time
 
 from world import World
 
@@ -7,6 +7,8 @@ from world import World
 
 WIDTH = 1440
 HEIGHT = 900
+
+FRAME_RATE = 60
 
 def main():
 
@@ -21,6 +23,10 @@ def main():
     
     screen = display.set_mode(screenSize, pygame.FULLSCREEN)
     mouse.set_visible(False)
+
+    # intialize clock
+
+    clock = time.Clock()
 
     # initialize game world
     
@@ -45,7 +51,7 @@ def main():
     
         # update game
         
-        world.update()
+        world.update(clock.tick())
         
         # render game
         

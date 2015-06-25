@@ -18,14 +18,14 @@ class Ball(object):
         self.wrap = wrap
         self.affectsOthers = affectsOthers
     
-    def update(self):
+    def update(self, millis):
         # apply gravity
-        self.applyGravity([sprite for sprite in self.world.sprites if isinstance(sprite, Ball)], self.world.reverseGravity)
+        self.applyGravity([sprite for sprite in self.world.sprites if isinstance(sprite, Ball)], self.world.reverseGravity, millis)
         
         # update position
-        self.position[0] += self.velocity[0]
-        self.position[1] += self.velocity[1]
-        
+        self.position[0] += self.velocity[0] * millis / 1000
+        self.position[1] += self.velocity[1] * millis / 1000
+
         # wrap around screen
         if self.wrap:
             radius = self.mass * self.density
@@ -34,10 +34,10 @@ class Ball(object):
             
     def applyForce(self, force):
         # add force to velocity
-        self.velocity[0] += force[0] / self.mass * 16;
-        self.velocity[1] += force[1] / self.mass * 16;
+        self.velocity[0] += float(force[0]) / self.mass * 100.0;
+        self.velocity[1] += float(force[1]) / self.mass * 100.0;
     
-    def applyGravity(self, balls, reverse = False):
+    def applyGravity(self, balls, reverse, millis):
         for ball in balls:
             if ball != self and ball.affectsOthers:
                 # gravitational force: F = (g * mass * mass) / (distance * distance)
@@ -49,7 +49,7 @@ class Ball(object):
                 
                     strength = (self.mass * ball.mass * self.world.G) / distSq
                     angle = atan2(diff[1], diff[0])
-                    force = [ cos(angle) * strength, sin(angle) * strength ]
+                    force = [ cos(angle) * strength * millis / 1000, sin(angle) * strength * millis / 1000 ]
 
                     if reverse:
                          force = [ -force[0], -force[1] ]
