@@ -44,18 +44,17 @@ class Ball(object):
                 # gravitational force: F = (g * mass * mass) / (distance * distance)
                 diff = (ball.position[0] - self.position[0], ball.position[1] - self.position[1])
                 distSq = diff[0]**2 + diff[1]**2
-                if (distSq > 1000):
-                    distSq = max(distSq, (self.mass * self.density + ball.mass * ball.density)**2)
-                
-                
-                    strength = (self.mass * ball.mass * self.world.G) / distSq
-                    angle = atan2(diff[1], diff[0])
-                    force = [ cos(angle) * strength * millis / 1000, sin(angle) * strength * millis / 1000 ]
+                distSq = max(distSq, (self.mass * self.density + ball.mass * ball.density)**2)
+            
+            
+                strength = (self.mass * ball.mass * self.world.G) / distSq
+                angle = atan2(diff[1], diff[0])
+                force = [ cos(angle) * strength * millis / 1000, sin(angle) * strength * millis / 1000 ]
 
-                    if reverse:
-                         force = [ -force[0], -force[1] ]
+                if reverse:
+                     force = [ -force[0], -force[1] ]
                 
-                    self.applyForce(force)
+                self.applyForce(force)
                 
     
     def draw(self, surface):

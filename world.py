@@ -42,15 +42,15 @@ class World(object):
         for i in range(self.MAX_NODES):
             self.add(self.spawner.spawn())
         
-        for i in range(self.PARTICLE_COUNT):
-            position = [randint(0, self.width), randint(0, self.height)]
-            self.add(Particle(self, position))
-        
         self.scoreFont = font.Font(font.match_font('arialblack'), 36)
     
     def add(self, sprite):
         self.sprites.append(sprite)
         self.sprites = sorted(self.sprites, key = lambda d: d.drawDepth)
+
+    def addParticle(self):
+        position = [randint(0, self.width), randint(0, self.height)]
+        self.add(Particle(self, position))
     
     def update(self, millis):
         keys = key.get_pressed()
@@ -95,6 +95,6 @@ class World(object):
     
     def renderGui(self):
         text = self.scoreFont.render(str(self.player.maxChain), True, GUI_COLOR)
-        position = (self.width / 2 - text.get_width() / 2, self.height / 2 - text.get_height() / 2)
+        position = (self.width / 2 - text.get_width() / 2, self.height - text.get_height() - 36)
         self.surface.blit(text, position)
         

@@ -25,7 +25,7 @@ def main():
 
     clock = time.Clock()
 
-    infoFont = font.Font(font.match_font('arial'), 24)
+    infoFont = font.Font(font.match_font('arial'), 12)
 
     # initialize game world
     
@@ -59,9 +59,14 @@ def main():
         # draw fps
 
         if DISPLAY_FPS:
-            text = infoFont.render(str(int(round(clock.get_fps()))), True, (255, 255, 255))
+            fps = clock.get_fps()
+            text = infoFont.render(str(int(round(fps))), True, (255, 255, 255))
             position = (screen.get_width() / 2 - text.get_width() / 2, 32)
             screen.blit(text, position)
+
+        # add particles until the processor can't handle it
+        if fps > FRAME_RATE + 5:
+            world.addParticle()
         
         # flip buffer
     
