@@ -1,5 +1,5 @@
 import pygame
-from pygame import key, font
+from pygame import key, font, time
 from random import choice, randint
 
 from player import Player
@@ -24,7 +24,7 @@ class World(object):
     G = 1000   # gravitational constant
     
     MAX_NODES = 8
-    PARTICLE_COUNT = 25
+    PARTICLE_COUNT = 100
     
     def __init__(self, surface):
         self.surface = surface
@@ -36,20 +36,21 @@ class World(object):
         self.sprites = []
         
         self.player = Player(world = self, position = [self.width / 2, self.height / 2])
-        self.sprites.append(self.player)
+        self.add(self.player)
         
         self.spawner = Spawner(self)
         for i in range(self.MAX_NODES):
-            self.sprites.append(self.spawner.spawn())
+            self.add(self.spawner.spawn())
         
         for i in range(self.PARTICLE_COUNT):
             position = [randint(0, self.width), randint(0, self.height)]
-            self.sprites.append(Particle(self, position))
+            self.add(Particle(self, position))
         
         self.scoreFont = font.Font(font.match_font('arialblack'), 36)
     
     def add(self, sprite):
         self.sprites.append(sprite)
+        self.sprites = sorted(self.sprites, key = lambda d: d.drawDepth)
     
     def update(self, millis):
         keys = key.get_pressed()
@@ -69,7 +70,7 @@ class World(object):
     def playerNodeCollide(self, node):
         self.player.score(node)
         self.sprites.remove(node)
-        self.sprites.append(self.spawner.spawn())
+        self.add(self.spawner.spawn())
     
     def nodeNodeCollide(self, node1, node2):
         if node1.color == node2.color:
@@ -83,7 +84,7 @@ class World(object):
         
             self.sprites.remove(node1)
             self.sprites.remove(node2)
-            self.sprites.append(Node(
+            self.add(Node(
                 world = self,
                 color = color,
                 position = position,

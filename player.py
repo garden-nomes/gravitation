@@ -6,7 +6,7 @@ from math import pi, cos, sin
 from ball import Ball
 
 PLAYER_SIZE = 24
-ACC = 50.0
+ACC = 80.0
 DENSITY = 1.0
 
 class Player(Ball):
@@ -59,7 +59,7 @@ class Player(Ball):
             self.applyForce([ 0, self.acceleration * millis / 1000 ])
         
         # rotate score chain
-        self.baseChainAngle = (self.baseChainAngle + pi / 300 * millis) % (pi * 2)
+        self.baseChainAngle = (self.baseChainAngle + pi * millis / 1000) % (pi * 2)
     
     def score(self, ball):
         if self.color == ball.color:

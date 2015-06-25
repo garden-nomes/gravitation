@@ -1,14 +1,11 @@
 import pygame
-from pygame import display, mouse, key, event, time
-
+from pygame import display, mouse, key, event, time, font
 from world import World
 
 # constants
 
-WIDTH = 1440
-HEIGHT = 900
-
 FRAME_RATE = 60
+DISPLAY_FPS = True
 
 def main():
 
@@ -27,6 +24,8 @@ def main():
     # intialize clock
 
     clock = time.Clock()
+
+    infoFont = font.Font(font.match_font('arial'), 24)
 
     # initialize game world
     
@@ -56,7 +55,14 @@ def main():
         # render game
         
         world.draw()
-    
+
+        # draw fps
+
+        if DISPLAY_FPS:
+            text = infoFont.render(str(int(round(clock.get_fps()))), True, (255, 255, 255))
+            position = (screen.get_width() / 2 - text.get_width() / 2, 32)
+            screen.blit(text, position)
+        
         # flip buffer
     
         display.flip()

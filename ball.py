@@ -4,7 +4,7 @@ from pygame import draw
 
 class Ball(object):
     
-    def __init__(self, world, position, velocity = None, color = None, mass = 16, density = 1, wrap = True, affectsOthers = True):        
+    def __init__(self, world, position, velocity = None, color = None, mass = 16, density = 1, wrap = True, affectsOthers = True, drawDepth = 0):        
         self.world = world
         self.position = position
         if velocity == None: velocity = [0, 0]
@@ -17,6 +17,7 @@ class Ball(object):
             self.color = color
         self.wrap = wrap
         self.affectsOthers = affectsOthers
+        self.drawDepth = drawDepth
     
     def update(self, millis):
         # apply gravity
