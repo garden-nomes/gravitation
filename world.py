@@ -1,5 +1,5 @@
 import pygame
-from pygame import key, font, time
+from pygame import key, font, time, mixer
 from random import choice, randint
 
 from player import Player
@@ -45,6 +45,7 @@ class World(object):
             self.add(self.spawner.spawn())
         
         self.scoreFont = font.Font(font.match_font('arialblack'), 36)
+        self.collisionSound = mixer.Sound("resources/bowl.ogg")
     
     def add(self, sprite):
         self.sprites.append(sprite)
@@ -70,6 +71,7 @@ class World(object):
         
     
     def playerNodeCollide(self, node):
+        self.collisionSound.play()
         self.player.score(node)
         self.sprites.remove(node)
         self.add(self.spawner.spawn())
