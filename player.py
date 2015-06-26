@@ -8,12 +8,13 @@ from ball import Ball
 PLAYER_SIZE = 24
 ACC = 80.0
 DENSITY = 1.0
+START_COLOR = (189, 189, 189)
 
 class Player(Ball):
     
     def __init__(self, world, position):
         self.world = world
-        self.color = (127, 127, 127) #choice(world.COLORS)
+        self.color = START_COLOR
         self.acceleration = ACC
         self.maxChain = 3
         self.baseMass = PLAYER_SIZE / DENSITY
@@ -59,7 +60,7 @@ class Player(Ball):
             self.applyForce([ 0, self.acceleration * millis / 1000 ])
         
         # rotate score chain
-        self.baseChainAngle = (self.baseChainAngle + pi * millis / 1000) % (pi * 2)
+        self.baseChainAngle = (self.baseChainAngle + pi * millis / 4000) % (pi * 2)
     
     def score(self, ball):
         if self.color == ball.color:
@@ -68,7 +69,8 @@ class Player(Ball):
                 self.mass = self.baseMass
                 self.chain = 0
                 self.maxChain += 1
-                self.color = (127, 127, 127)
+                self.color = START_COLOR
+                self.world.add(self.world.spawner.spawn())
             else:
                 self.mass += ball.mass
         else:

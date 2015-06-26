@@ -9,16 +9,16 @@ from ball import Ball
 from particle import Particle
 
 BACKGROUND = (32, 32, 32)
-GUI_COLOR = (224, 224, 224)
+GUI_COLOR = (0, 0, 0)
 
 class World(object):
     
     # publicly accesible constants
     
     COLORS = (
-        (127, 127, 0),
-        (0, 127, 127),
-        (127, 0, 127)
+        (189, 125, 15),
+        (125, 15, 188),
+        (15, 188, 125)
     )
     
     G = 1000   # gravitational constant
@@ -37,6 +37,8 @@ class World(object):
         
         self.player = Player(world = self, position = [self.width / 2, self.height / 2])
         self.add(self.player)
+        
+        self.background = BACKGROUND
         
         self.spawner = Spawner(self)
         for i in range(self.MAX_NODES):
@@ -60,12 +62,12 @@ class World(object):
             sprite.update(millis)
     
     def draw(self):
-        self.surface.fill(BACKGROUND)
+        self.surface.fill(self.background)
+        self.renderGui()
         
         for sprite in self.sprites:
             sprite.draw(self.surface)
         
-        self.renderGui()
     
     def playerNodeCollide(self, node):
         self.player.score(node)

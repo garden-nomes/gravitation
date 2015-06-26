@@ -59,19 +59,12 @@ class Ball(object):
     
     def draw(self, surface):
         radius = self.mass * self.density
-        gfxdraw.filled_circle(
+        draw.ellipse(
             surface,
-            int(self.position[0]),
-            int(self.position[1]),
-            int(radius),
-            self.color
-        )
-        gfxdraw.aacircle(
-            surface,
-            int(self.position[0]),
-            int(self.position[1]),
-            int(radius),
-            self.color
+            self.color,
+            (   self.position[0] - radius,
+                self.position[1] - radius,
+                radius * 2, radius * 2      )
         )
     
     def checkCollision(self, ball):
