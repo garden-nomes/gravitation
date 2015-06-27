@@ -1,5 +1,5 @@
 from random import choice
-from math import atan2, cos, sin
+from math import sqrt, atan2, cos, sin
 from pygame import draw, gfxdraw
 
 class Ball(object):
@@ -44,12 +44,12 @@ class Ball(object):
                 # gravitational force: F = (g * mass * mass) / (distance * distance)
                 diff = (ball.position[0] - self.position[0], ball.position[1] - self.position[1])
                 distSq = diff[0]**2 + diff[1]**2
+                dist = sqrt(distSq)
                 distSq = max(distSq, (self.mass * self.density + ball.mass * ball.density)**2)
             
             
                 strength = (self.mass * ball.mass * self.world.G) / distSq
-                angle = atan2(diff[1], diff[0])
-                force = [ cos(angle) * strength * millis / 1000, sin(angle) * strength * millis / 1000 ]
+                force = [ diff[0] / dist * strength * millis / 1000, diff[1] / dist * strength * millis / 1000, ]
 
                 if reverse:
                      force = [ -force[0], -force[1] ]

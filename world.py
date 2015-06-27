@@ -10,6 +10,7 @@ from particle import Particle
 
 BACKGROUND = (32, 32, 32)
 GUI_COLOR = (0, 0, 0)
+HITS = 11
 
 class World(object):
     
@@ -46,6 +47,9 @@ class World(object):
         
         self.scoreFont = font.Font(font.match_font('arialblack'), 36)
         self.collisionSound = mixer.Sound("resources/bowl.ogg")
+        self.hitSounds = []
+        for i in range(1, HITS + 1):
+            self.hitSounds.append(mixer.Sound("resources/hit" + str(i) + ".ogg"))
     
     def add(self, sprite):
         self.sprites.append(sprite)
@@ -71,7 +75,6 @@ class World(object):
         
     
     def playerNodeCollide(self, node):
-        self.collisionSound.play()
         self.player.score(node)
         self.sprites.remove(node)
         self.add(self.spawner.spawn())
@@ -101,4 +104,9 @@ class World(object):
         text = self.scoreFont.render(str(self.player.maxChain), True, GUI_COLOR)
         position = (self.width / 2 - text.get_width() / 2, self.height - text.get_height() - 36)
         self.surface.blit(text, position)
-        
+    
+    def dong(self):
+        self.collisionSound.play()
+    
+    def dink(self):
+        choice(self.hitSounds).play()

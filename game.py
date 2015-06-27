@@ -1,6 +1,7 @@
 import pygame
-from pygame import display, mouse, key, event, time, font
+from pygame import display, mouse, key, event, time, font, mixer
 from world import World
+from node import Node
 
 # constants
 

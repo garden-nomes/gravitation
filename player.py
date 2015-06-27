@@ -60,7 +60,7 @@ class Player(Ball):
             self.applyForce([ 0, self.acceleration * millis / 1000 ])
         
         # rotate score chain
-        self.baseChainAngle = (self.baseChainAngle + pi * millis / 4000) % (pi * 2)
+        self.baseChainAngle = (self.baseChainAngle + pi * millis / 8000) % (pi * 2)
     
     def score(self, ball):
         if self.color == ball.color:
@@ -71,9 +71,12 @@ class Player(Ball):
                 self.maxChain += 1
                 self.color = START_COLOR
                 self.world.add(self.world.spawner.spawn())
+                self.world.dong()
             else:
                 self.mass += ball.mass
+                self.world.dink()
         else:
             self.mass = self.baseMass
             self.chain = 1
             self.color = ball.color
+            self.world.dink()
