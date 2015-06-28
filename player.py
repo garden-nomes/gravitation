@@ -72,11 +72,10 @@ class Player(Ball):
                 self.color = START_COLOR
                 self.world.add(self.world.spawner.spawn())
                 self.world.dong()
+                self.world.text.flash()
             else:
                 self.mass += ball.mass
-                self.world.dink()
         else:
             self.mass = self.baseMass
             self.chain = 1
             self.color = ball.color
-            self.world.dink()

@@ -1,16 +1,18 @@
 import pygame
 from pygame import key, font, time, mixer
 from random import choice, randint
+from math import sqrt
 
 from player import Player
 from node import Node
 from spawner import Spawner
 from ball import Ball
 from particle import Particle
+from text import Text
 
 BACKGROUND = (32, 32, 32)
 GUI_COLOR = (0, 0, 0)
-HITS = 11
+HITS = 6
 
 class World(object):
     
@@ -45,11 +47,14 @@ class World(object):
         for i in range(self.MAX_NODES):
             self.add(self.spawner.spawn())
         
-        self.scoreFont = font.Font(font.match_font('arialblack'), 36)
-        self.collisionSound = mixer.Sound("resources/bowl.ogg")
+        self.text = Text(self)
+        self.text.flash()
+        self.text.showTutorial()  
+              
+        self.collisionSound = mixer.Sound("resources/chime.aif")
         self.hitSounds = []
         for i in range(1, HITS + 1):
-            self.hitSounds.append(mixer.Sound("resources/hit" + str(i) + ".ogg"))
+            self.hitSounds.append(mixer.Sound("resources/hit" + str(i) + ".aif"))
     
     def add(self, sprite):
         self.sprites.append(sprite)
@@ -63,21 +68,25 @@ class World(object):
         keys = key.get_pressed()
         self.reverseGravity = keys[pygame.K_LSHIFT] or keys[pygame.K_SPACE]
         
+        self.text.update(millis)
+        
         for sprite in self.sprites:
             sprite.update(millis)
     
     def draw(self):
         self.surface.fill(self.background)
-        self.renderGui()
         
         for sprite in self.sprites:
             sprite.draw(self.surface)
+        
+        self.text.draw(self.surface)
         
     
     def playerNodeCollide(self, node):
         self.player.score(node)
         self.sprites.remove(node)
         self.add(self.spawner.spawn())
+        self.dink(self.player, node)
     
     def nodeNodeCollide(self, node1, node2):
         if node1.color == node2.color:
@@ -100,13 +109,14 @@ class World(object):
                 density = density,
             ))
     
-    def renderGui(self):
-        text = self.scoreFont.render(str(self.player.maxChain), True, GUI_COLOR)
-        position = (self.width / 2 - text.get_width() / 2, self.height - text.get_height() - 36)
-        self.surface.blit(text, position)
-    
     def dong(self):
         self.collisionSound.play()
     
-    def dink(self):
-        choice(self.hitSounds).play()
+    def dink(self, ball1, ball2):
+        diff = [ball1.velocity[0] - ball2.velocity[0], ball1.velocity[1] - ball2.velocity[1]]
+        dist = sqrt(diff[0]**2 + diff[1]**2)
+        volume = dist / 500
+        if volume > 1: volume = 1
+        sound = choice(self.hitSounds)
+        sound.set_volume(volume)
+        sound.play()

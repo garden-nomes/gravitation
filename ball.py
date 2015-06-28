@@ -19,9 +19,10 @@ class Ball(object):
         self.affectsOthers = affectsOthers
         self.drawDepth = drawDepth
     
-    def update(self, millis):
+    def update(self, millis, reverseGravity = None):
         # apply gravity
-        self.applyGravity([sprite for sprite in self.world.sprites if isinstance(sprite, Ball)], self.world.reverseGravity, millis)
+        if reverseGravity == None: reverseGravity = self.world.reverseGravity
+        self.applyGravity([sprite for sprite in self.world.sprites if isinstance(sprite, Ball)], reverseGravity, millis)
         
         # update position
         self.position[0] += self.velocity[0] * millis / 1000
@@ -44,9 +45,8 @@ class Ball(object):
                 # gravitational force: F = (g * mass * mass) / (distance * distance)
                 diff = (ball.position[0] - self.position[0], ball.position[1] - self.position[1])
                 distSq = diff[0]**2 + diff[1]**2
-                dist = sqrt(distSq)
                 distSq = max(distSq, (self.mass * self.density + ball.mass * ball.density)**2)
-            
+                dist = sqrt(distSq)
             
                 strength = (self.mass * ball.mass * self.world.G) / distSq
                 force = [ diff[0] / dist * strength * millis / 1000, diff[1] / dist * strength * millis / 1000, ]

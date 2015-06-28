@@ -31,6 +31,12 @@ def main():
     # initialize game world
     
     world = World(screen)
+    
+    # start music
+    
+    mixer.music.load("resources/pad.ogg")
+    mixer.music.set_volume(0.1)
+    mixer.music.play(-1)
 
     # begin main game loop
 

@@ -13,7 +13,8 @@ class Node(Ball):
                                    color = color, mass = mass, density = density, wrap = False)
     
     def update(self, millis):
-        super(Node, self).update(millis)
+        reverseGravity = None if self.wrap else False
+        super(Node, self).update(millis, reverseGravity = reverseGravity)
         
         # start wrapping around screen if already onscreen
         if self.wrap == False:
