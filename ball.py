@@ -1,6 +1,8 @@
 from random import choice
-from math import sqrt, atan2, cos, sin
+from math import sqrt, atan2, cos, sin, floor
 from pygame import draw, gfxdraw
+
+import helpers
 
 class Ball(object):
     
@@ -46,7 +48,7 @@ class Ball(object):
                 diff = (ball.position[0] - self.position[0], ball.position[1] - self.position[1])
                 distSq = diff[0]**2 + diff[1]**2
                 distSq = max(distSq, (self.mass * self.density + ball.mass * ball.density)**2)
-                dist = sqrt(distSq)
+                dist = sqrt(distSq)#helpers.sqrts[int(distSq)]
             
                 strength = (self.mass * ball.mass * self.world.G) / distSq
                 force = [ diff[0] / dist * strength * millis / 1000, diff[1] / dist * strength * millis / 1000, ]

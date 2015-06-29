@@ -48,8 +48,6 @@ class World(object):
             self.add(self.spawner.spawn())
         
         self.text = Text(self)
-        self.text.flash()
-        self.text.showTutorial()  
               
         self.collisionSound = mixer.Sound("resources/chime.aif")
         self.hitSounds = []
@@ -75,14 +73,13 @@ class World(object):
     
     def draw(self):
         self.surface.fill(self.background)
-        
-        for sprite in self.sprites:
-            sprite.draw(self.surface)
-        
         self.text.draw(self.surface)
         
+        for sprite in self.sprites:
+            sprite.draw(self.surface)        
     
     def playerNodeCollide(self, node):
+        if self.text.tutorial == 0: self.text.nextTutorial()
         self.player.score(node)
         self.sprites.remove(node)
         self.add(self.spawner.spawn())
@@ -115,7 +112,7 @@ class World(object):
     def dink(self, ball1, ball2):
         diff = [ball1.velocity[0] - ball2.velocity[0], ball1.velocity[1] - ball2.velocity[1]]
         dist = sqrt(diff[0]**2 + diff[1]**2)
-        volume = dist / 500
+        volume = dist / 800
         if volume > 1: volume = 1
         sound = choice(self.hitSounds)
         sound.set_volume(volume)

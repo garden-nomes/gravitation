@@ -6,7 +6,7 @@ from math import pi, cos, sin
 from ball import Ball
 
 PLAYER_SIZE = 24
-ACC = 80.0
+ACC = 100.0
 DENSITY = 1.0
 START_COLOR = (189, 189, 189)
 
@@ -73,6 +73,7 @@ class Player(Ball):
                 self.world.add(self.world.spawner.spawn())
                 self.world.dong()
                 self.world.text.flash()
+                if self.world.text.tutorial > 0: self.world.text.nextTutorial()
             else:
                 self.mass += ball.mass
         else:
