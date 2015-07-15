@@ -6,7 +6,7 @@ from node import Node
 # constants
 
 FRAME_RATE = 60
-DISPLAY_FPS = True
+DISPLAY_FPS = False
 
 def main():
 
@@ -57,12 +57,10 @@ def main():
     
         # update game
         
-        #world.update(clock.tick())
-        clock.tick()
+        world.update(clock.tick())
         
         # render game
-        screen.fill((0,0,0))
-        #world.draw()
+        world.draw()
 
         # draw fps
         
@@ -73,8 +71,8 @@ def main():
             screen.blit(text, position)
 
         # add particles until the processor can't handle it
-        # if fps > FRAME_RATE + 5:
-#             world.addParticle()
+        if fps > FRAME_RATE + 5:
+            world.addParticle()
         
         # flip buffer
     
